@@ -1,4 +1,3 @@
-pyrogram
 tgcrypto
 aiohttp
 python-dotenv
@@ -9,3 +8,4 @@ apscheduler
 requests
 psutil
 pyromod
+pyrofork==2.3.45
