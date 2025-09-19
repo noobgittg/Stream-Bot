@@ -67,7 +67,7 @@ async def follow_user(b,m):
                     parse_mode="HTML",
                     disable_web_page_preview=True)
 
-@StreamBot.on_message((filters.command("start") | filters.regex('start⚡️')) & filters.private & ~filters.edited)
+@StreamBot.on_message((filters.command("start") | filters.regex('start⚡️')) & filters.private)
 async def start(b, m):
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id)
@@ -223,7 +223,7 @@ Send me any file and get a direct download link and streamable link.!""",
         )
 
 
-@StreamBot.on_message(filters.regex('help📚') & filters.private & ~filters.edited)
+@StreamBot.on_message(filters.regex('help📚') & filters.private)
 async def help_handler(bot, message):
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id)
