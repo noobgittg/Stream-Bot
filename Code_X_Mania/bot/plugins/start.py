@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 from Code_X_Mania.utils.human_readable import humanbytes
 from Code_X_Mania.utils.database import Database
-from pyrogram import filters
+from pyrogram import filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
 
@@ -22,7 +22,7 @@ async def maintainers_handler(b, m):
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Developer💻", url="https://t.me/adarsh_goel")]]
             ),
-            parse_mode="markdown",
+            parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
 
@@ -38,7 +38,7 @@ async def follow_handler(b, m):
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("FOLLOW ME", url="https://GITHUB.COM/CODE-X-MANIA")]]
             ),
-            parse_mode="HTML",
+            parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
 
@@ -59,7 +59,7 @@ async def start(b, m):
                 return await b.send_message(
                     chat_id=m.chat.id,
                     text="__You are banned from using me! Contact @codexmaniabot__",
-                    parse_mode="markdown"
+                    parse_mode=enums.ParseMode.HTML
                 )
         except UserNotParticipant:
             return await StreamBot.send_photo(
@@ -69,20 +69,20 @@ async def start(b, m):
                 reply_markup=InlineKeyboardMarkup(
                     [[InlineKeyboardButton("Join Now 🔓", url=f"https://t.me/{Var.UPDATES_CHANNEL}")]]
                 ),
-                parse_mode="HTML"
+                parse_mode=enums.ParseMode.HTML,
             )
         except Exception:
             return await b.send_message(
                 chat_id=m.chat.id,
                 text="<i>Something went wrong!</i>",
-                parse_mode="HTML"
+                parse_mode=enums.ParseMode.HTML,
             )
 
     await StreamBot.send_photo(
         chat_id=m.chat.id,
         photo="https://user-images.githubusercontent.com/88939380/137127129-a86fc939-2931-4c66-b6f6-b57711a9eab7.png",
         caption="Hi! I am Telegram File to Link Generator Bot with Channel support.\n\nSend me any file and get direct download & stream links!",
-        parse_mode="HTML",
+        parse_mode=enums.ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("Help 📚", callback_data="help")],
@@ -109,7 +109,7 @@ async def help_handler(bot, message):
 /help - Show this help
 /follow - Follow my GitHub
 /maintainers - Show bot maintainers""",
-        parse_mode="HTML",
+        parse_mode=enums.ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("💁‍♂️ DEV", url="https://t.me/codexmania")],
