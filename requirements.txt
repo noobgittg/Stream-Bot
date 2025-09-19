@@ -1,11 +1,11 @@
-tgcrypto
 aiohttp
+pyrofork
 python-dotenv
+tgcrypto
 motor
 aiofiles
 dnspython
-apscheduler
 requests
+jinja2
 psutil
-pyromod
-pyrofork==2.3.45
+apscheduler
