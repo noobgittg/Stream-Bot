@@ -1,5 +1,3 @@
-# (c) Jigarvarma2005 || Code-X-Mania
-#edit at your own risk
 import os
 import asyncio
 from asyncio import TimeoutError
@@ -18,7 +16,7 @@ pass_dict = {}
 pass_db = Database(Var.DATABASE_URL, "jv_passwords")
 
 
-@StreamBot.on_message((filters.regex("login🔑") | filters.command("login")) & ~filters.edited, group=4)
+@StreamBot.on_message((filters.regex("login🔑") | filters.command("login")) & group=4)
 async def login_handler(c: Client, m: Message):
     try:
         try:
@@ -43,7 +41,7 @@ async def login_handler(c: Client, m: Message):
     except Exception as e:
         print(e)
 
-@StreamBot.on_message((filters.private) & (filters.document | filters.video | filters.audio | filters.photo) & ~filters.edited, group=4)
+@StreamBot.on_message((filters.private) & (filters.document | filters.video | filters.audio | filters.photo) & group=4)
 async def private_receive_handler(c: Client, m: Message):
     check_pass = await pass_db.get_user_pass(m.chat.id)
     if check_pass== None:
@@ -151,7 +149,7 @@ async def private_receive_handler(c: Client, m: Message):
         await c.send_message(chat_id=Var.BIN_CHANNEL, text=f"Gᴏᴛ FʟᴏᴏᴅWᴀɪᴛ ᴏғ {str(e.x)}s from [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\n**𝚄𝚜𝚎𝚛 𝙸𝙳 :** `{str(m.from_user.id)}`", disable_web_page_preview=True, parse_mode="Markdown")
 
 
-@StreamBot.on_message(filters.channel & ~filters.group & (filters.document | filters.video | filters.photo) & ~filters.edited & ~filters.forwarded, group=-1)
+@StreamBot.on_message(filters.channel & ~filters.group & (filters.document | filters.video | filters.photo) & filters.forwarded, group=-1)
 async def channel_receive_handler(bot, broadcast):
     check_pass = await pass_db.get_user_pass(broadcast.chat.id)
     if check_pass == None:
