@@ -11,98 +11,61 @@ from pyrogram.types import Message
 
 db = Database(Var.DATABASE_URL, Var.SESSION_NAME)
 
-MY_PASS = os.environ.get("MY_PASS", None)
-pass_dict = {}
-pass_db = Database(Var.DATABASE_URL, "jv_passwords")
 
-
-@StreamBot.on_message(filters.command("login") & filters.private)
-async def login_handler(c: Client, m: Message):
-    try:
-        jv = await m.reply_text("Now send me password.\n\nIf you don't know ask at @codexmaniachat\n\n(Use /cancel to cancel)")
-        try:
-            _text = await c.listen(m.chat.id, filters=filters.text, timeout=90)
-            if _text.text:
-                textp = _text.text
-                if textp == "/cancel":
-                    await jv.edit("Process Cancelled Successfully")
-                    return
-            else:
-                return
-        except TimeoutError:
-            await jv.edit("I can't wait more for password, try again")
-            return
-
-        if textp == MY_PASS:
-            await pass_db.add_user_pass(m.chat.id, textp)
-            jv_text = "Yeah! You entered the password correctly"
-        else:
-            jv_text = "Wrong password, try again"
-        await jv.edit(jv_text)
-    except Exception as e:
-        print(e)
-
-
+# ✅ Private handler: direct file receive (no login)
 @StreamBot.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.photo))
 async def private_receive_handler(c: Client, m: Message):
-    check_pass = await pass_db.get_user_pass(m.chat.id)
-    if check_pass is None:
-        await m.reply_text("Login first using /login\nIf you don't know the pass, request it from @adarshgoelz")
-        return
-    if check_pass != MY_PASS:
-        await pass_db.delete_user(m.chat.id)
-        return
-    if not await db.is_user_exist(m.from_user.id):
-        await db.add_user(m.from_user.id)
-        await c.send_message(
-            Var.BIN_CHANNEL,
-            f"New User Joined:\n\nName: [{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
-        )
-    if Var.UPDATES_CHANNEL != "None":
-        try:
-            user = await c.get_chat_member(Var.UPDATES_CHANNEL, m.chat.id)
-            if user.status == "kicked":
+    try:
+        if not await db.is_user_exist(m.from_user.id):
+            await db.add_user(m.from_user.id)
+            await c.send_message(
+                Var.BIN_CHANNEL,
+                f"New User Joined:\n\nName: [{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
+            )
+
+        if Var.UPDATES_CHANNEL != "None":
+            try:
+                user = await c.get_chat_member(Var.UPDATES_CHANNEL, m.chat.id)
+                if user.status == "kicked":
+                    await c.send_message(
+                        chat_id=m.chat.id,
+                        text="Sorry, you are banned from using me.\n\nContact developer @adarshgoelz",
+                        parse_mode="markdown",
+                        disable_web_page_preview=True
+                    )
+                    return
+            except UserNotParticipant:
                 await c.send_message(
                     chat_id=m.chat.id,
-                    text="Sorry, you are banned from using me.\n\nContact developer @adarshgoelz",
+                    text=f"Join updates channel @{Var.UPDATES_CHANNEL} to use me."
+                )
+                return
+            except Exception as e:
+                await m.reply_text(str(e))
+                await c.send_message(
+                    chat_id=m.chat.id,
+                    text="Something went wrong. Contact my boss @adarshgoelz",
                     parse_mode="markdown",
                     disable_web_page_preview=True
                 )
                 return
-        except UserNotParticipant:
-            await c.send_message(
-                chat_id=m.chat.id,
-                text=f"Join updates channel @{Var.UPDATES_CHANNEL} to use me."
-            )
-            return
-        except Exception as e:
-            await m.reply_text(str(e))
-            await c.send_message(
-                chat_id=m.chat.id,
-                text="Something went wrong. Contact my boss @adarshgoelz",
-                parse_mode="markdown",
-                disable_web_page_preview=True
-            )
-            return
-    try:
+
+        # 📂 File Info
         file_size = None
         if m.video:
             file_size = f"{humanbytes(m.video.file_size)}"
+            file_name = m.video.file_name
         elif m.document:
             file_size = f"{humanbytes(m.document.file_size)}"
+            file_name = m.document.file_name
         elif m.audio:
             file_size = f"{humanbytes(m.audio.file_size)}"
+            file_name = m.audio.file_name
         elif m.photo:
             file_size = f"{humanbytes(m.photo.file_size)}"
+            file_name = "Photo"
 
-        file_name = None
-        if m.video:
-            file_name = f"{m.video.file_name}"
-        elif m.document:
-            file_name = f"{m.document.file_name}"
-        elif m.audio:
-            file_name = f"{m.audio.file_name}"
-
+        # 🔗 Generate Links
         log_msg = await m.forward(chat_id=Var.BIN_CHANNEL)
         stream_link = Var.URL + "watch/" + str(log_msg.message_id)
         online_link = Var.URL + "download/" + str(log_msg.message_id)
@@ -130,6 +93,7 @@ async def private_receive_handler(c: Client, m: Message):
             quote=True,
             disable_web_page_preview=True
         )
+
     except FloodWait as e:
         print(f"Sleeping for {str(e.x)}s")
         await asyncio.sleep(e.x)
@@ -141,16 +105,9 @@ async def private_receive_handler(c: Client, m: Message):
         )
 
 
-@StreamBot.on_message(filters.channel & ~filters.group & (filters.document | filters.video | filters.photo) & filters.forwarded)
+# ✅ Channel Handler (no password check)
+@StreamBot.on_message(filters.channel & (filters.document | filters.video | filters.photo) & filters.forwarded)
 async def channel_receive_handler(bot, broadcast):
-    check_pass = await pass_db.get_user_pass(broadcast.chat.id)
-    if check_pass is None:
-        await broadcast.reply_text("Login first using /login\nIf you don't know the pass, request it from @adarshgoelz")
-        return
-    if check_pass != MY_PASS:
-        await broadcast.reply_text("Wrong password, login again")
-        await pass_db.delete_user(broadcast.chat.id)
-        return
     if int(broadcast.chat.id) in Var.BANNED_CHANNELS:
         await bot.leave_chat(broadcast.chat.id)
         return
@@ -158,6 +115,7 @@ async def channel_receive_handler(bot, broadcast):
         log_msg = await broadcast.forward(chat_id=Var.BIN_CHANNEL)
         stream_link = Var.URL + "watch/" + str(log_msg.message_id)
         online_link = Var.URL + "download/" + str(log_msg.message_id)
+
         await log_msg.reply_text(
             text=f"Channel Name: `{broadcast.chat.title}`\nChannel ID: `{broadcast.chat.id}`\nRequest URL: {stream_link}",
             quote=True,
