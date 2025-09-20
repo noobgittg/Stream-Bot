@@ -5,14 +5,12 @@ from pyrogram.errors import UserNotParticipant
 
 from Code_X_Mania.bot import StreamBot
 from Code_X_Mania.vars import Var
-from Code_X_Mania.utils.human_readable import humanbytes
 from Code_X_Mania.utils.database import Database
 
 logger = logging.getLogger(__name__)
 db = Database(Var.DATABASE_URL, Var.SESSION_NAME)
 
 
-# /start command
 @StreamBot.on_message(filters.command("start") & filters.private)
 async def start_command(b, m):
     if not await db.is_user_exist(m.from_user.id):
@@ -22,11 +20,37 @@ async def start_command(b, m):
             f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
         )
 
+    if Var.UPDATES_CHANNEL != "None":
+        try:
+            user = await b.get_chat_member(Var.UPDATES_CHANNEL, m.chat.id)
+            if user.status == "kicked":
+                return await b.send_message(
+                    chat_id=m.chat.id,
+                    text="__You are banned from using me! Contact @codexmaniabot__",
+                    parse_mode=enums.ParseMode.HTML
+                )
+        except UserNotParticipant:
+            return await b.send_photo(
+                chat_id=m.chat.id,
+                photo="https://i.ibb.co/NKXgXD4/vlmnwosn-0.png",
+                caption="<i>Join the updates channel to use me 🔐</i>",
+                reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("Join Now 🔓", url=f"https://t.me/{Var.UPDATES_CHANNEL}")]]
+                ),
+                parse_mode=enums.ParseMode.HTML,
+            )
+        except Exception:
+            return await b.send_message(
+                chat_id=m.chat.id,
+                text="<i>Something went wrong!</i>",
+                parse_mode=enums.ParseMode.HTML,
+            )
+
     await b.send_photo(
         chat_id=m.chat.id,
         photo="https://envs.sh/dp1.jpg",
         caption=(
-            "<b>ʜᴇʟʟᴏ [{m.from_user.first_name}](tg://user?id={m.from_user.id})...⚡\n\n"
+            f"<b>ʜᴇʟʟᴏ [{m.from_user.first_name}](tg://user?id={m.from_user.id})...⚡\n\n"
             "ɪ ᴀᴍ ᴀ sɪᴍᴘʟᴇ ᴛᴇʟᴇɢʀᴀᴍ ғɪʟᴇ/ᴠɪᴅᴇᴏ ᴛᴏ ᴘᴇʀᴍᴀɴᴇɴᴛ ʟɪɴᴋ ᴀɴᴅ sᴛʀᴇᴀᴍ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ.\n\n"
             "ᴜsᴇ /help ғᴏʀ ᴍᴏʀᴇ ᴅᴇᴛᴀɪʟs.\n\n"
             "sᴇɴᴅ ᴍᴇ ᴀɴʏ ᴠɪᴅᴇᴏ / ғɪʟᴇ ᴛᴏ sᴇᴇ ᴍʏ ᴘᴏᴡᴇʀ...</b>"
@@ -42,7 +66,6 @@ async def start_command(b, m):
     )
 
 
-# /help command
 @StreamBot.on_message(filters.command("help") & filters.private)
 async def help_command(b, m):
     if not await db.is_user_exist(m.from_user.id):
@@ -52,15 +75,41 @@ async def help_command(b, m):
             f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
         )
 
+    if Var.UPDATES_CHANNEL != "None":
+        try:
+            user = await b.get_chat_member(Var.UPDATES_CHANNEL, m.chat.id)
+            if user.status == "kicked":
+                return await b.send_message(
+                    chat_id=m.chat.id,
+                    text="__You are banned from using me! Contact @codexmaniabot__",
+                    parse_mode=enums.ParseMode.HTML
+                )
+        except UserNotParticipant:
+            return await b.send_photo(
+                chat_id=m.chat.id,
+                photo="https://i.ibb.co/NKXgXD4/vlmnwosn-0.png",
+                caption="<i>Join the updates channel to use me 🔐</i>",
+                reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("Join Now 🔓", url=f"https://t.me/{Var.UPDATES_CHANNEL}")]]
+                ),
+                parse_mode=enums.ParseMode.HTML,
+            )
+        except Exception:
+            return await b.send_message(
+                chat_id=m.chat.id,
+                text="<i>Something went wrong!</i>",
+                parse_mode=enums.ParseMode.HTML,
+            )
+
     await b.send_photo(
         chat_id=m.chat.id,
         photo="https://envs.sh/dp1.jpg",
         caption=(
-            "<b>┣⪼ Sᴇɴᴅ ᴍᴇ ᴀɴʏ ғɪʟᴇ/ᴠɪᴅᴇᴏ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ sʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ.\n\n"
-            "┣⪼ Tʜɪs ʟɪɴᴋ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴏʀ sᴛʀᴇᴀᴍ ᴜsɪɴɢ ᴇxᴛᴇʀɴᴀʟ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀs.\n\n"
-            "┣⪼ Fᴏʀ sᴛʀᴇᴀᴍɪɴɢ, ᴄᴏᴘʏ ᴛʜᴇ ʟɪɴᴋ ᴀɴᴅ ᴘᴀsᴛᴇ ɪɴ ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀ.\n\n"
-            "┣⪼ Tʜɪs ʙᴏᴛ ᴀʟsᴏ sᴜᴘᴘᴏʀᴛs ᴄʜᴀɴɴᴇʟs. Aᴅᴅ ᴍᴇ ᴀs ᴀᴅᴍɪɴ ᴛᴏ ɢᴇᴛ ʀᴇᴀʟᴛɪᴍᴇ ʟɪɴᴋs ғᴏʀ ғɪʟᴇs/ᴠɪᴅᴇᴏs.\n\n"
-            "┣⪼ Fᴏʀ ᴍᴏʀᴇ ɪɴғᴏ :- /about\n\n"
+            "<b>┣⪼ Sᴇɴᴅ ᴍᴇ ᴀɴʏ ғɪʟᴇ/ᴠɪᴅᴇᴏ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ sʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ.\n"
+            "┣⪼ Tʜɪs ʟɪɴᴋ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴏʀ sᴛʀᴇᴀᴍ ᴜsɪɴɢ ᴇxᴛᴇʀɴᴀʟ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀs.\n"
+            "┣⪼ Fᴏʀ sᴛʀᴇᴀᴍɪɴɢ, ᴄᴏᴘʏ ᴛʜᴇ ʟɪɴᴋ ᴀɴᴅ ᴘᴀsᴛᴇ ɪɴ ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀ.\n"
+            "┣⪼ Tʜɪs ʙᴏᴛ ᴀʟsᴏ sᴜᴘᴘᴏʀᴛs ᴄʜᴀɴɴᴇʟs. Aᴅᴅ ᴍᴇ ᴀs ᴀᴅᴍɪɴ ᴛᴏ ɢᴇᴛ ʀᴇᴀʟᴛɪᴍᴇ ʟɪɴᴋs ғᴏʀ ғɪʟᴇs/ᴠɪᴅᴇᴏs.\n"
+            "┣⪼ Fᴏʀ ᴍᴏʀᴇ ɪɴғᴏ :- /about\n"
             "ᴘʟᴇᴀsᴇ sʜᴀʀᴇ ᴀɴᴅ sᴜʙsᴄʀɪʙᴇ </b>"
         ),
         parse_mode=enums.ParseMode.HTML,
@@ -74,7 +123,6 @@ async def help_command(b, m):
     )
 
 
-# /about command
 @StreamBot.on_message(filters.command("about") & filters.private)
 async def about_command(b, m):
     if not await db.is_user_exist(m.from_user.id):
@@ -83,6 +131,32 @@ async def about_command(b, m):
             Var.BIN_CHANNEL,
             f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
         )
+
+    if Var.UPDATES_CHANNEL != "None":
+        try:
+            user = await b.get_chat_member(Var.UPDATES_CHANNEL, m.chat.id)
+            if user.status == "kicked":
+                return await b.send_message(
+                    chat_id=m.chat.id,
+                    text="__You are banned from using me! Contact @codexmaniabot__",
+                    parse_mode=enums.ParseMode.HTML
+                )
+        except UserNotParticipant:
+            return await b.send_photo(
+                chat_id=m.chat.id,
+                photo="https://i.ibb.co/NKXgXD4/vlmnwosn-0.png",
+                caption="<i>Join the updates channel to use me 🔐</i>",
+                reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("Join Now 🔓", url=f"https://t.me/{Var.UPDATES_CHANNEL}")]]
+                ),
+                parse_mode=enums.ParseMode.HTML,
+            )
+        except Exception:
+            return await b.send_message(
+                chat_id=m.chat.id,
+                text="<i>Something went wrong!</i>",
+                parse_mode=enums.ParseMode.HTML,
+            )
 
     await b.send_photo(
         chat_id=m.chat.id,
