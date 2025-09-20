@@ -11,6 +11,18 @@ from pyrogram.types import Message
 
 db = Database(Var.DATABASE_URL, Var.SESSION_NAME)
 
+𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗲𝗱 !
+
+📂 Fɪʟᴇ ɴᴀᴍᴇ : www.1TamilMV.dev - Hridayapoorvam (2025) Malayalam H.mkv
+
+📦 Fɪʟᴇ ꜱɪᴢᴇ : 724.74 MiB
+
+📥 Dᴏᴡɴʟᴏᴀᴅ : http://circular-matilda-fgdftyy-87c41f40.koyeb.app/AgADNR115799
+
+ 🖥WATCH  : http://circular-matilda-fgdftyy-87c41f40.koyeb.app/watch/AgADNR115799
+
+🚸 Nᴏᴛᴇ : LINK WON'T EXPIRE TILL I DELETE
+
 
 @StreamBot.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.photo))
 async def private_receive_handler(c: Client, m: Message):
@@ -69,17 +81,17 @@ async def private_receive_handler(c: Client, m: Message):
         online_link = Var.URL + "download/" + str(log_msg.id)
 
         msg_text = f"""
-<i><u>Your Link Generated!</u></i>
+<i><u>𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗲𝗱 !</u></i>
 
-<b>📂 File Name:</b> <i>{file_name}</i>
+<b>📂 Fɪʟᴇ ɴᴀᴍᴇ :</b> <i>{file_name}</i>
 
 <b>📦 File Size:</b> <i>{file_size}</i>
 
-<b>📥 Download:</b> <i>{online_link}</i>
+<b>📥 Dᴏᴡɴʟᴏᴀᴅ :</b> <i>{online_link}</i>
 
-<b>🖥 Watch:</b> <i>{stream_link}</i>
+<b>🖥WATCH :</b> <i>{stream_link}</i>
 
-<b>🚸 Note: Link won't expire till I delete.</b>
+<b>🚸 Nᴏᴛᴇ : Link won't expire till I delete.</b>
 """
 
         await log_msg.reply_text(
