@@ -23,35 +23,6 @@ async def start(b, m):
             f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
         )
 
-    # Check if user joined updates channel
-    if Var.UPDATES_CHANNEL and Var.UPDATES_CHANNEL != "None":
-        try:
-            user = await b.get_chat_member(Var.UPDATES_CHANNEL, m.from_user.id)
-            if user.status == enums.ChatMemberStatus.BANNED:
-                return await b.send_message(
-                    chat_id=m.chat.id,
-                    text="__You are banned from using me! Contact @codexmaniabot__",
-                    parse_mode=enums.ParseMode.HTML
-                )
-        except UserNotParticipant:
-            return await b.send_photo(
-                chat_id=m.chat.id,
-                photo="https://envs.sh/dp1.jpg",
-                caption="<i>Join the updates channel to use me 🔐</i>",
-                reply_markup=InlineKeyboardMarkup(
-                    [[InlineKeyboardButton("Join Now 🔓", url=f"https://t.me/{Var.UPDATES_CHANNEL}")]]
-                ),
-                parse_mode=enums.ParseMode.HTML,
-            )
-        except Exception as e:
-            logger.error(f"Error checking updates channel: {e}")
-            return await b.send_message(
-                chat_id=m.chat.id,
-                text="<i>Something went wrong!</i>",
-                parse_mode=enums.ParseMode.HTML,
-            )
-
-    # Send welcome message
     await b.send_photo(
         chat_id=m.chat.id,
         photo="https://envs.sh/dp1.jpg",
@@ -72,18 +43,20 @@ async def start(b, m):
     )
 
 
-# /help command
 @StreamBot.on_message(filters.command("help") & filters.private)
-async def help_handler(bot, message):
-    if not await db.is_user_exist(message.from_user.id):
-        await db.add_user(message.from_user.id)
-        await bot.send_message(
+async def start(b, m):
+    # Add new user to DB if not already exists
+    if not await db.is_user_exist(m.from_user.id):
+        await db.add_user(m.from_user.id)
+        await b.send_message(
             Var.BIN_CHANNEL,
-            f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{message.from_user.first_name}](tg://user?id={message.from_user.id}) started your bot!"
+            f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
         )
 
-    await message.reply_text(
-        text=(
+    await b.send_photo(
+        chat_id=m.chat.id,
+        photo="https://envs.sh/dp1.jpg",
+        caption=(
             "<b>┣⪼ Sᴇɴᴅ ᴍᴇ ᴀɴʏ ғɪʟᴇ/ᴠɪᴅᴇᴏ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ sʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ.\n\n"
             "┣⪼ Tʜɪs ʟɪɴᴋ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴏʀ sᴛʀᴇᴀᴍ ᴜsɪɴɢ ᴇxᴛᴇʀɴᴀʟ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀs.\n\n"
             "┣⪼ Fᴏʀ sᴛʀᴇᴀᴍɪɴɢ, ᴄᴏᴘʏ ᴛʜᴇ ʟɪɴᴋ ᴀɴᴅ ᴘᴀsᴛᴇ ɪᴛ ɪɴ ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀ.\n\n"
@@ -100,3 +73,5 @@ async def help_handler(bot, message):
             ]
         )
     )
+
+
