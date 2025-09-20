@@ -11,49 +11,23 @@ from Code_X_Mania.utils.database import Database
 logger = logging.getLogger(__name__)
 db = Database(Var.DATABASE_URL, Var.SESSION_NAME)
 
-@StreamBot.on_message(filters.command(["help", "rule", "rules"]) & filters.private)
-async def ai_generate_private(client, message):
-    buttons = [
-        [InlineKeyboardButton('⚙️ 𝘽𝙤𝙩 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚙️', url='https://t.me/mallumovieworldmain3')],
-        [InlineKeyboardButton('⚓ 𝙊𝙏𝙏 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚓', url='https://t.me/+bG-xSQIgDBphODhl')],
-        [InlineKeyboardButton('💻 𝙊𝙏𝙏 𝙐𝙥𝙙𝙖𝙩𝙚 𝘾𝙝𝙖𝙣𝙣𝙚𝙡 💻', url='https://t.me/mallumovieworldmain1')]
-    ]
-    reply_markup = InlineKeyboardMarkup(buttons)
 
-    await message.reply_text(
-        text="""<b><blockquote>❗️How to Search Movies Here❓
-▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-1. Just Send Movie Name and Movie Released Year Correctly.
-<blockquote>(Check Google for Correct Movie Spelling and Year)</blockquote>
-
-Examples:  
-Oppam 2016  
-Baahubali 2015 1080p  
-<blockquote>(For Getting only 1080p Quality Files)</blockquote>
-
-Baahubali 2015 Malayalam  
-Baahubali 2015 Tamil  
-<blockquote>(For Dubbed Movie Files)</blockquote>
-
-▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-❗️On Android, Better Use VLC Media Player For Watching Movies.
-▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</b>""",
-        reply_markup=reply_markup
-    )
-
+# /start command
 @StreamBot.on_message(filters.command("start") & filters.private)
 async def start(b, m):
+    # Add new user to DB if not already exists
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id)
         await b.send_message(
             Var.BIN_CHANNEL,
-            f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:** \n\n[{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
+            f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
         )
 
-    if Var.UPDATES_CHANNEL != "None":
+    # Check if user joined updates channel
+    if Var.UPDATES_CHANNEL and Var.UPDATES_CHANNEL != "None":
         try:
-            user = await b.get_chat_member(Var.UPDATES_CHANNEL, m.chat.id)
-            if user.status == "kicked":
+            user = await b.get_chat_member(Var.UPDATES_CHANNEL, m.from_user.id)
+            if user.status == enums.ChatMemberStatus.BANNED:
                 return await b.send_message(
                     chat_id=m.chat.id,
                     text="__You are banned from using me! Contact @codexmaniabot__",
@@ -62,24 +36,31 @@ async def start(b, m):
         except UserNotParticipant:
             return await b.send_photo(
                 chat_id=m.chat.id,
-                photo="https://i.ibb.co/NKXgXD4/vlmnwosn-0.png",
+                photo="https://envs.sh/dp1.jpg",
                 caption="<i>Join the updates channel to use me 🔐</i>",
                 reply_markup=InlineKeyboardMarkup(
                     [[InlineKeyboardButton("Join Now 🔓", url=f"https://t.me/{Var.UPDATES_CHANNEL}")]]
                 ),
                 parse_mode=enums.ParseMode.HTML,
             )
-        except Exception:
+        except Exception as e:
+            logger.error(f"Error checking updates channel: {e}")
             return await b.send_message(
                 chat_id=m.chat.id,
                 text="<i>Something went wrong!</i>",
                 parse_mode=enums.ParseMode.HTML,
             )
 
+    # Send welcome message
     await b.send_photo(
         chat_id=m.chat.id,
-        photo="https://user-images.githubusercontent.com/88939380/137127129-a86fc939-2931-4c66-b6f6-b57711a9eab7.png",
-        caption="Hi! I am a Telegram File to Link Generator Bot with Channel support.\n\nSend me any file and get direct download & stream links!",
+        photo="https://envs.sh/dp1.jpg",
+        caption=(
+            "<b>ʜᴇʟʟᴏ...⚡\n\n"
+            "ɪ ᴀᴍ ᴀ sɪᴍᴘʟᴇ ᴛᴇʟᴇɢʀᴀᴍ ғɪʟᴇ/ᴠɪᴅᴇᴏ ᴛᴏ ᴘᴇʀᴍᴀɴᴇɴᴛ ʟɪɴᴋ ᴀɴᴅ sᴛʀᴇᴀᴍ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ.\n\n"
+            "ᴜsᴇ /help ғᴏʀ ᴍᴏʀᴇ ᴅᴇᴛᴀɪʟs.\n\n"
+            "sᴇɴᴅ ᴍᴇ ᴀɴʏ ᴠɪᴅᴇᴏ / ғɪʟᴇ ᴛᴏ sᴇᴇ ᴍʏ ᴘᴏᴡᴇʀ...</b>"
+        ),
         parse_mode=enums.ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
             [
@@ -90,23 +71,26 @@ async def start(b, m):
         )
     )
 
+
+# /help command
 @StreamBot.on_message(filters.command("help") & filters.private)
 async def help_handler(bot, message):
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id)
         await bot.send_message(
             Var.BIN_CHANNEL,
-            f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ** \n\n[{message.from_user.first_name}](tg://user?id={message.from_user.id}) started your bot!"
+            f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{message.from_user.first_name}](tg://user?id={message.from_user.id}) started your bot!"
         )
 
     await message.reply_text(
-        text="""<b>Send me any file or video, I will give you streamable & download links.</b>\n
-<b>I also support Channels: Add me to your Channel, send media & get links!</b>\n
-<b>Commands:</b>
-/start - Start the bot  
-/help - Show this help  
-/follow - Follow my GitHub  
-/maintainers - Show bot maintainers""",
+        text=(
+            "<b>┣⪼ Sᴇɴᴅ ᴍᴇ ᴀɴʏ ғɪʟᴇ/ᴠɪᴅᴇᴏ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ sʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ.\n\n"
+            "┣⪼ Tʜɪs ʟɪɴᴋ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴏʀ sᴛʀᴇᴀᴍ ᴜsɪɴɢ ᴇxᴛᴇʀɴᴀʟ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀs.\n\n"
+            "┣⪼ Fᴏʀ sᴛʀᴇᴀᴍɪɴɢ, ᴄᴏᴘʏ ᴛʜᴇ ʟɪɴᴋ ᴀɴᴅ ᴘᴀsᴛᴇ ɪᴛ ɪɴ ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀ.\n\n"
+            "┣⪼ Tʜɪs ʙᴏᴛ ᴀʟsᴏ sᴜᴘᴘᴏʀᴛs ᴄʜᴀɴɴᴇʟs. Aᴅᴅ ᴍᴇ ᴀs ᴀᴅᴍɪɴ ᴛᴏ ɢᴇᴛ ʀᴇᴀʟᴛɪᴍᴇ ʟɪɴᴋs ғᴏʀ ғɪʟᴇs/ᴠɪᴅᴇᴏs.\n\n"
+            "┣⪼ Fᴏʀ ᴍᴏʀᴇ ɪɴғᴏ :- /about\n\n"
+            "ᴘʟᴇᴀsᴇ sʜᴀʀᴇ ᴀɴᴅ sᴜʙsᴄʀɪʙᴇ </b>"
+        ),
         parse_mode=enums.ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
             [
