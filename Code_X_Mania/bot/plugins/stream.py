@@ -65,10 +65,10 @@ async def private_receive_handler(c: Client, m: Message):
             file_size = f"{humanbytes(m.photo.file_size)}"
             file_name = "Photo"
 
-        # 🔗 Generate Links
-        log_msg = await m.forward(chat_id=Var.BIN_CHANNEL)
-        stream_link = Var.URL + "watch/" + str(log_msg.message_id)
-        online_link = Var.URL + "download/" + str(log_msg.message_id)
+        # 🔗 Generate Links (fixed: forward → copy, message_id → id)
+        log_msg = await m.copy(chat_id=Var.BIN_CHANNEL)
+        stream_link = Var.URL + "watch/" + str(log_msg.id)
+        online_link = Var.URL + "download/" + str(log_msg.id)
 
         msg_text = f"""
 <i><u>Your Link Generated!</u></i>
@@ -95,11 +95,11 @@ async def private_receive_handler(c: Client, m: Message):
         )
 
     except FloodWait as e:
-        print(f"Sleeping for {str(e.x)}s")
-        await asyncio.sleep(e.x)
+        print(f"Sleeping for {str(e.value)}s")
+        await asyncio.sleep(e.value)
         await c.send_message(
             chat_id=Var.BIN_CHANNEL,
-            text=f"Got FloodWait of {str(e.x)}s from [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\nUser ID: `{str(m.from_user.id)}`",
+            text=f"Got FloodWait of {str(e.value)}s from [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\nUser ID: `{str(m.from_user.id)}`",
             disable_web_page_preview=True,
             parse_mode="Markdown"
         )
@@ -107,14 +107,15 @@ async def private_receive_handler(c: Client, m: Message):
 
 # ✅ Channel Handler (no password check)
 @StreamBot.on_message(filters.channel & (filters.document | filters.video | filters.photo) & filters.forwarded)
-async def channel_receive_handler(bot, broadcast):
+async def channel_receive_handler(bot, broadcast: Message):
     if int(broadcast.chat.id) in Var.BANNED_CHANNELS:
         await bot.leave_chat(broadcast.chat.id)
         return
     try:
-        log_msg = await broadcast.forward(chat_id=Var.BIN_CHANNEL)
-        stream_link = Var.URL + "watch/" + str(log_msg.message_id)
-        online_link = Var.URL + "download/" + str(log_msg.message_id)
+        # fixed: forward → copy, message_id → id
+        log_msg = await broadcast.copy(chat_id=Var.BIN_CHANNEL)
+        stream_link = Var.URL + "watch/" + str(log_msg.id)
+        online_link = Var.URL + "download/" + str(log_msg.id)
 
         await log_msg.reply_text(
             text=f"Channel Name: `{broadcast.chat.title}`\nChannel ID: `{broadcast.chat.id}`\nRequest URL: {stream_link}",
@@ -126,11 +127,11 @@ async def channel_receive_handler(bot, broadcast):
             text=f"Generated Links:\n\nWatch: {stream_link}\nDownload: {online_link}"
         )
     except FloodWait as w:
-        print(f"Sleeping for {str(w.x)}s")
-        await asyncio.sleep(w.x)
+        print(f"Sleeping for {str(w.value)}s")
+        await asyncio.sleep(w.value)
         await bot.send_message(
             chat_id=Var.BIN_CHANNEL,
-            text=f"Got FloodWait of {str(w.x)}s from {broadcast.chat.title}\n\nChannel ID: `{str(broadcast.chat.id)}`",
+            text=f"Got FloodWait of {str(w.value)}s from {broadcast.chat.title}\n\nChannel ID: `{str(broadcast.chat.id)}`",
             disable_web_page_preview=True,
             parse_mode="Markdown"
         )
