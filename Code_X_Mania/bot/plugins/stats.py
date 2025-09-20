@@ -5,9 +5,9 @@ from pyrogram import filters
 from Code_X_Mania.bot import StreamBot
 from Code_X_Mania import StartTime
 from utils_bot import get_readable_file_size
-from ..vars import OWNER_ID  # Ensure this relative import works in your project
+from Code_X_Mania.vars import Var
 
-@StreamBot.on_message(filters.private & filters.command("stats") & filters.user(OWNER_ID))
+@StreamBot.on_message(filters.private & filters.command("stats") & filters.user(Var.OWNER_ID))
 async def status_command(bot, message):
     # Uptime
     current_time = readable_time(time.time() - StartTime)
