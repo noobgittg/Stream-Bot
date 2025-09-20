@@ -50,7 +50,7 @@ async def start_command(b, m):
         chat_id=m.chat.id,
         photo="https://envs.sh/dp1.jpg",
         caption=(
-            f"<b>ʜᴇʟʟᴏ [{m.from_user.first_name}](tg://user?id={m.from_user.id})...⚡\n\n"
+            f'<b>ʜᴇʟʟᴏ <a href="tg://user?id={m.from_user.id}">{m.from_user.first_name}</a>...⚡\n\n'
             "ɪ ᴀᴍ ᴀ sɪᴍᴘʟᴇ ᴛᴇʟᴇɢʀᴀᴍ ғɪʟᴇ/ᴠɪᴅᴇᴏ ᴛᴏ ᴘᴇʀᴍᴀɴᴇɴᴛ ʟɪɴᴋ ᴀɴᴅ sᴛʀᴇᴀᴍ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ.\n\n"
             "ᴜsᴇ /help ғᴏʀ ᴍᴏʀᴇ ᴅᴇᴛᴀɪʟs.\n\n"
             "sᴇɴᴅ ᴍᴇ ᴀɴʏ ᴠɪᴅᴇᴏ / ғɪʟᴇ ᴛᴏ sᴇᴇ ᴍʏ ᴘᴏᴡᴇʀ...</b>"
