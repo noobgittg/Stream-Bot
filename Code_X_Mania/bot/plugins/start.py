@@ -14,8 +14,7 @@ db = Database(Var.DATABASE_URL, Var.SESSION_NAME)
 
 # /start command
 @StreamBot.on_message(filters.command("start") & filters.private)
-async def start(b, m):
-    # Add new user to DB if not already exists
+async def start_command(b, m):
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id)
         await b.send_message(
@@ -27,7 +26,7 @@ async def start(b, m):
         chat_id=m.chat.id,
         photo="https://envs.sh/dp1.jpg",
         caption=(
-            "<b>ʜᴇʟʟᴏ...⚡\n\n"
+            "<b>ʜᴇʟʟᴏ [{m.from_user.first_name}](tg://user?id={m.from_user.id})...⚡\n\n"
             "ɪ ᴀᴍ ᴀ sɪᴍᴘʟᴇ ᴛᴇʟᴇɢʀᴀᴍ ғɪʟᴇ/ᴠɪᴅᴇᴏ ᴛᴏ ᴘᴇʀᴍᴀɴᴇɴᴛ ʟɪɴᴋ ᴀɴᴅ sᴛʀᴇᴀᴍ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ.\n\n"
             "ᴜsᴇ /help ғᴏʀ ᴍᴏʀᴇ ᴅᴇᴛᴀɪʟs.\n\n"
             "sᴇɴᴅ ᴍᴇ ᴀɴʏ ᴠɪᴅᴇᴏ / ғɪʟᴇ ᴛᴏ sᴇᴇ ᴍʏ ᴘᴏᴡᴇʀ...</b>"
@@ -43,9 +42,9 @@ async def start(b, m):
     )
 
 
+# /help command
 @StreamBot.on_message(filters.command("help") & filters.private)
-async def start(b, m):
-    # Add new user to DB if not already exists
+async def help_command(b, m):
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id)
         await b.send_message(
@@ -59,7 +58,7 @@ async def start(b, m):
         caption=(
             "<b>┣⪼ Sᴇɴᴅ ᴍᴇ ᴀɴʏ ғɪʟᴇ/ᴠɪᴅᴇᴏ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ sʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ.\n\n"
             "┣⪼ Tʜɪs ʟɪɴᴋ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴏʀ sᴛʀᴇᴀᴍ ᴜsɪɴɢ ᴇxᴛᴇʀɴᴀʟ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀs.\n\n"
-            "┣⪼ Fᴏʀ sᴛʀᴇᴀᴍɪɴɢ, ᴄᴏᴘʏ ᴛʜᴇ ʟɪɴᴋ ᴀɴᴅ ᴘᴀsᴛᴇ ɪᴛ ɪɴ ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀ.\n\n"
+            "┣⪼ Fᴏʀ sᴛʀᴇᴀᴍɪɴɢ, ᴄᴏᴘʏ ᴛʜᴇ ʟɪɴᴋ ᴀɴᴅ ᴘᴀsᴛᴇ ɪɴ ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀ.\n\n"
             "┣⪼ Tʜɪs ʙᴏᴛ ᴀʟsᴏ sᴜᴘᴘᴏʀᴛs ᴄʜᴀɴɴᴇʟs. Aᴅᴅ ᴍᴇ ᴀs ᴀᴅᴍɪɴ ᴛᴏ ɢᴇᴛ ʀᴇᴀʟᴛɪᴍᴇ ʟɪɴᴋs ғᴏʀ ғɪʟᴇs/ᴠɪᴅᴇᴏs.\n\n"
             "┣⪼ Fᴏʀ ᴍᴏʀᴇ ɪɴғᴏ :- /about\n\n"
             "ᴘʟᴇᴀsᴇ sʜᴀʀᴇ ᴀɴᴅ sᴜʙsᴄʀɪʙᴇ </b>"
@@ -75,3 +74,39 @@ async def start(b, m):
     )
 
 
+# /about command
+@StreamBot.on_message(filters.command("about") & filters.private)
+async def about_command(b, m):
+    if not await db.is_user_exist(m.from_user.id):
+        await db.add_user(m.from_user.id)
+        await b.send_message(
+            Var.BIN_CHANNEL,
+            f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:**\n\n[{m.from_user.first_name}](tg://user?id={m.from_user.id}) started your bot!"
+        )
+
+    await b.send_photo(
+        chat_id=m.chat.id,
+        photo="https://envs.sh/dp1.jpg",
+        caption=(
+            "<b>sᴏᴍᴇ ʜɪᴅᴅᴇɴ ᴅᴇᴛᴀɪʟs😜\n\n"
+            "╭━━━━━━━〔ғɪʟᴇ ᴛᴏ ʟɪɴᴋ ʙᴏᴛ〕\n"
+            "┃\n"
+            "┣⪼ʙᴏᴛ ɴᴀᴍᴇ : ғɪʟᴇ ᴛᴏ ʟɪɴᴋ\n"
+            "┣⪼ᴜᴘᴅᴀᴛᴇᴢ : <a href=https://t.me/mallumovieworldmain1>𝙈𝙈𝙒 𝘽𝙊𝙏𝙕</a>\n"
+            "┣⪼sᴜᴘᴘᴏʀᴛ : <a href=https://t.me/mallumovieworldmain1>𝚂𝚄𝙿𝙿𝙾𝚁𝚃</a>\n"
+            "┣⪼sᴇʀᴠᴇʀ : ʜᴇʀᴜᴋᴏ\n"
+            "┣⪼ʟɪʙʀᴀʀʏ : ᴘʏʀᴏɢʀᴀᴍ\n"
+            "┣⪼ʟᴀɴɢᴜᴀɢᴇ: ᴘʏᴛʜᴏɴ 3.10\n"
+            "┣⪼ʏᴏᴜᴛᴜʙᴇ : <a href=https://t.me/mallumovieworldmain1>𝙈𝙈𝙒 𝘽𝙊𝙏𝙕</a>\n"
+            "┃\n"
+            "╰━━━━━━━〔ᴘʟᴇᴀsʀ sᴜᴘᴘᴏʀᴛ〕</b>"
+        ),
+        parse_mode=enums.ParseMode.HTML,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton('⚙️ 𝘽𝙤𝙩 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚙️', url='https://t.me/mallumovieworldmain3')],
+                [InlineKeyboardButton('⚓ 𝙊𝙏𝙏 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚓', url='https://t.me/+bG-xSQIgDBphODhl')],
+                [InlineKeyboardButton('💻 𝙊𝙏𝙏 𝙐𝙥𝙙𝙖𝙩𝙚 𝘾𝙝𝙖𝙣𝙣𝙚𝙡 💻', url='https://t.me/mallumovieworldmain1')]
+            ]
+        )
+    )
