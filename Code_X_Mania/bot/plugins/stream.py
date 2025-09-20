@@ -30,7 +30,7 @@ async def private_receive_handler(c: Client, m: Message):
                     await c.send_message(
                         chat_id=m.chat.id,
                         text="Sorry, you are banned from using me.\n\nContact developer @adarshgoelz",
-                        parse_mode="markdown",
+                        parse_mode=enums.ParseMode.HTML,
                         disable_web_page_preview=True
                     )
                     return
@@ -45,7 +45,7 @@ async def private_receive_handler(c: Client, m: Message):
                 await c.send_message(
                     chat_id=m.chat.id,
                     text="Something went wrong. Contact my boss @adarshgoelz",
-                    parse_mode="markdown",
+                    parse_mode=enums.ParseMode.HTML,
                     disable_web_page_preview=True
                 )
                 return
@@ -84,12 +84,12 @@ async def private_receive_handler(c: Client, m: Message):
         await log_msg.reply_text(
             text=f"Requested by: [{m.from_user.first_name}](tg://user?id={m.from_user.id})\nUser ID: `{m.from_user.id}`\nStream Link: {stream_link}",
             disable_web_page_preview=True,
-            parse_mode="Markdown",
+            parse_mode=enums.ParseMode.HTML,
             quote=True
         )
         await m.reply_text(
             text=msg_text,
-            parse_mode="HTML",
+            parse_mode=enums.ParseMode.HTML,
             quote=True,
             disable_web_page_preview=True
         )
@@ -101,7 +101,7 @@ async def private_receive_handler(c: Client, m: Message):
             chat_id=Var.BIN_CHANNEL,
             text=f"Got FloodWait of {str(e.value)}s from [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\nUser ID: `{str(m.from_user.id)}`",
             disable_web_page_preview=True,
-            parse_mode="Markdown"
+            parse_mode=enums.ParseMode.HTML
         )
 
 
@@ -120,7 +120,7 @@ async def channel_receive_handler(bot, broadcast: Message):
         await log_msg.reply_text(
             text=f"Channel Name: `{broadcast.chat.title}`\nChannel ID: `{broadcast.chat.id}`\nRequest URL: {stream_link}",
             quote=True,
-            parse_mode="Markdown"
+            parse_mode=enums.ParseMode.HTML
         )
         await bot.send_message(
             chat_id=broadcast.chat.id,
@@ -133,13 +133,13 @@ async def channel_receive_handler(bot, broadcast: Message):
             chat_id=Var.BIN_CHANNEL,
             text=f"Got FloodWait of {str(w.value)}s from {broadcast.chat.title}\n\nChannel ID: `{str(broadcast.chat.id)}`",
             disable_web_page_preview=True,
-            parse_mode="Markdown"
+            parse_mode=enums.ParseMode.HTML
         )
     except Exception as e:
         await bot.send_message(
             chat_id=Var.BIN_CHANNEL,
             text=f"Error: `{e}`",
             disable_web_page_preview=True,
-            parse_mode="Markdown"
+            parse_mode=enums.ParseMode.HTML
         )
         print(f"Can't edit broadcast message! Error: {e}")
