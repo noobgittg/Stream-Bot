@@ -32,7 +32,7 @@ async def start_command(b, m):
         except UserNotParticipant:
             return await b.send_photo(
                 chat_id=m.chat.id,
-                photo="https://i.ibb.co/NKXgXD4/vlmnwosn-0.png",
+                photo="https://envs.sh/dp1.jpg",
                 caption="<i>Join the updates channel to use me 🔐</i>",
                 reply_markup=InlineKeyboardMarkup(
                     [[InlineKeyboardButton("Join Now 🔓", url=f"https://t.me/{Var.UPDATES_CHANNEL}")]]
@@ -105,11 +105,11 @@ async def help_command(b, m):
         chat_id=m.chat.id,
         photo="https://envs.sh/dp1.jpg",
         caption=(
-            "<b>┣⪼ Sᴇɴᴅ ᴍᴇ ᴀɴʏ ғɪʟᴇ/ᴠɪᴅᴇᴏ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ sʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ.\n"
-            "┣⪼ Tʜɪs ʟɪɴᴋ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴏʀ sᴛʀᴇᴀᴍ ᴜsɪɴɢ ᴇxᴛᴇʀɴᴀʟ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀs.\n"
-            "┣⪼ Fᴏʀ sᴛʀᴇᴀᴍɪɴɢ, ᴄᴏᴘʏ ᴛʜᴇ ʟɪɴᴋ ᴀɴᴅ ᴘᴀsᴛᴇ ɪɴ ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀ.\n"
-            "┣⪼ Tʜɪs ʙᴏᴛ ᴀʟsᴏ sᴜᴘᴘᴏʀᴛs ᴄʜᴀɴɴᴇʟs. Aᴅᴅ ᴍᴇ ᴀs ᴀᴅᴍɪɴ ᴛᴏ ɢᴇᴛ ʀᴇᴀʟᴛɪᴍᴇ ʟɪɴᴋs ғᴏʀ ғɪʟᴇs/ᴠɪᴅᴇᴏs.\n"
-            "┣⪼ Fᴏʀ ᴍᴏʀᴇ ɪɴғᴏ :- /about\n"
+            "<b>┣⪼ Sᴇɴᴅ ᴍᴇ ᴀɴʏ ғɪʟᴇ/ᴠɪᴅᴇᴏ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ɢɪᴠᴇ ʏᴏᴜ ᴀ ᴘᴇʀᴍᴀɴᴇɴᴛ sʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ.\n\n"
+            "┣⪼ Tʜɪs ʟɪɴᴋ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴏʀ sᴛʀᴇᴀᴍ ᴜsɪɴɢ ᴇxᴛᴇʀɴᴀʟ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀs.\n\n"
+            "┣⪼ Fᴏʀ sᴛʀᴇᴀᴍɪɴɢ, ᴄᴏᴘʏ ᴛʜᴇ ʟɪɴᴋ ᴀɴᴅ ᴘᴀsᴛᴇ ɪɴ ʏᴏᴜʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏᴇʀ.\n\n"
+            "┣⪼ Tʜɪs ʙᴏᴛ ᴀʟsᴏ sᴜᴘᴘᴏʀᴛs ᴄʜᴀɴɴᴇʟs. Aᴅᴅ ᴍᴇ ᴀs ᴀᴅᴍɪɴ ᴛᴏ ɢᴇᴛ ʀᴇᴀʟᴛɪᴍᴇ ʟɪɴᴋs ғᴏʀ ғɪʟᴇs/ᴠɪᴅᴇᴏs.\n\n"
+            "┣⪼ Fᴏʀ ᴍᴏʀᴇ ɪɴғᴏ :- /about\n\n"
             "ᴘʟᴇᴀsᴇ sʜᴀʀᴇ ᴀɴᴅ sᴜʙsᴄʀɪʙᴇ </b>"
         ),
         parse_mode=enums.ParseMode.HTML,
