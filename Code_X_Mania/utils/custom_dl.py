@@ -19,6 +19,9 @@ async def offset_fix(offset: int, chunksize: int) -> int:
 
 class TGCustomYield:
     def __init__(self):
+        """
+        Custom class to stream files from Telegram.
+        """
         self.main_bot = StreamBot
 
     @staticmethod
@@ -42,7 +45,7 @@ class TGCustomYield:
         file_id_str = media if isinstance(media, str) else media.file_id
         file_id_obj = FileId.decode(file_id_str)
 
-        # Prevent break in routes.py by attaching additional props
+        # Attach additional props for compatibility
         setattr(file_id_obj, "file_size", getattr(media, "file_size", 0))
         setattr(file_id_obj, "mime_type", getattr(media, "mime_type", ""))
         setattr(file_id_obj, "file_name", getattr(media, "file_name", ""))
@@ -65,11 +68,11 @@ class TGCustomYield:
                 await media_session.start()
 
                 for _ in range(3):
-                    exported_auth = await client.send(
+                    exported_auth = await client.invoke(
                         raw.functions.auth.ExportAuthorization(dc_id=data.dc_id)
                     )
                     try:
-                        await media_session.send(
+                        await media_session.invoke(
                             raw.functions.auth.ImportAuthorization(
                                 id=exported_auth.id,
                                 bytes=exported_auth.bytes
@@ -150,7 +153,7 @@ class TGCustomYield:
         media_session = await self.generate_media_session(client, media_msg)
         location = await self.get_location(data)
 
-        r = await media_session.send(
+        r = await media_session.invoke(
             raw.functions.upload.GetFile(location=location, offset=offset, limit=chunk_size)
         )
 
@@ -171,7 +174,7 @@ class TGCustomYield:
                 elif current_part < part_count:
                     yield chunk
 
-                r = await media_session.send(
+                r = await media_session.invoke(
                     raw.functions.upload.GetFile(location=location, offset=offset, limit=chunk_size)
                 )
 
@@ -187,7 +190,7 @@ class TGCustomYield:
         offset = 0
         m_file = []
 
-        r = await media_session.send(
+        r = await media_session.invoke(
             raw.functions.upload.GetFile(location=location, offset=offset, limit=limit)
         )
 
@@ -200,7 +203,7 @@ class TGCustomYield:
                 m_file.append(chunk)
                 offset += limit
 
-                r = await media_session.send(
+                r = await media_session.invoke(
                     raw.functions.upload.GetFile(location=location, offset=offset, limit=limit)
                 )
 
