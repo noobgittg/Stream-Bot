@@ -12,7 +12,6 @@ from pyrogram.types import Message
 db = Database(Var.DATABASE_URL, Var.SESSION_NAME)
 
 
-# ✅ Private handler: direct file receive (no login)
 @StreamBot.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.photo))
 async def private_receive_handler(c: Client, m: Message):
     try:
@@ -65,7 +64,6 @@ async def private_receive_handler(c: Client, m: Message):
             file_size = f"{humanbytes(m.photo.file_size)}"
             file_name = "Photo"
 
-        # 🔗 Generate Links (fixed: forward → copy, message_id → id)
         log_msg = await m.copy(chat_id=Var.BIN_CHANNEL)
         stream_link = Var.URL + "watch/" + str(log_msg.id)
         online_link = Var.URL + "download/" + str(log_msg.id)
@@ -74,8 +72,11 @@ async def private_receive_handler(c: Client, m: Message):
 <i><u>Your Link Generated!</u></i>
 
 <b>📂 File Name:</b> <i>{file_name}</i>
+
 <b>📦 File Size:</b> <i>{file_size}</i>
+
 <b>📥 Download:</b> <i>{online_link}</i>
+
 <b>🖥 Watch:</b> <i>{stream_link}</i>
 
 <b>🚸 Note: Link won't expire till I delete.</b>
@@ -105,7 +106,6 @@ async def private_receive_handler(c: Client, m: Message):
         )
 
 
-# ✅ Channel Handler (no password check)
 @StreamBot.on_message(filters.channel & (filters.document | filters.video | filters.photo) & filters.forwarded)
 async def channel_receive_handler(bot, broadcast: Message):
     if int(broadcast.chat.id) in Var.BANNED_CHANNELS:
