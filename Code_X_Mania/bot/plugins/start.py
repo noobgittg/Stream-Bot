@@ -11,37 +11,39 @@ from pyrogram.errors import UserNotParticipant
 
 db = Database(Var.DATABASE_URL, Var.SESSION_NAME)
 
-@StreamBot.on_message(filters.command("maintainers") & filters.private)
-async def maintainers_handler(b, m):
-    try:
-        await b.send_message(chat_id=m.chat.id, text="HELLO", quote=True)
-    except Exception:
-        await b.send_message(
-            chat_id=m.chat.id,
-            text="I am Coded By Adarsh Goel and Sponsored by [Gopal Naik](https://t.me/Movie_leecher)",
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Developer💻", url="https://t.me/adarsh_goel")]]
-            ),
-            parse_mode=enums.ParseMode.HTML,
-            disable_web_page_preview=True
-        )
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram import Client, filters, enums
 
+@Client.on_message(filters.command(['help','rule','rules']))
+async def ai_generate_private(client, message):
+    buttons = [[
+            InlineKeyboardButton('⚙️ 𝘽𝙤𝙩 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚙️', url='https://t.me/mallumovieworldmain3'),
+            ],[
+            InlineKeyboardButton(' ⚓ 𝙊𝙏𝙏 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚓ ', url='https://t.me/+bG-xSQIgDBphODhl'),
+            ],[
+            InlineKeyboardButton('💻 𝙊𝙏𝙏 𝙐𝙥𝙙𝙖𝙩𝙚 𝘾𝙝𝙖𝙣𝙣𝙚𝙡 💻', url='https://t.me/mallumovieworldmain1')
+        ]]
+    reply_markup = InlineKeyboardMarkup(buttons)
+    
+    await message.reply_text(
+        text="""<b><blockquote>❗️How to Search Movies Here❓
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+1. Just Send Movie Name and Movie Released Year Correctly.
+<blockquote>(Check Google for Correct Movie Spelling and Movie Released Year)</blockquote>
 
-@StreamBot.on_message(filters.command("follow") & filters.private)
-async def follow_handler(b, m):
-    try:
-        await b.send_message(chat_id=m.chat.id, text="HELLO", quote=True)
-    except Exception:
-        await b.send_message(
-            chat_id=m.chat.id,
-            text="<B>HERE'S THE FOLLOW LINK</B>",
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("FOLLOW ME", url="https://GITHUB.COM/CODE-X-MANIA")]]
-            ),
-            parse_mode=enums.ParseMode.HTML,
-            disable_web_page_preview=True
-        )
-
+Examples: -
+Oppam 2016
+Baahubali 2015 1080p
+<blockquote>(For Getting only 1080p Quality Files)</blockquote>
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+Baahubali 2015 Malayalam
+Baahubali 2015 Tamil
+<blockquote>(For Dubbed Movie Files)</blockquote>
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+❗️On Android, Better Use VLC Media Player For Watch Movie's.
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</b>""",
+        reply_markup=reply_markup
+    )
 
 @StreamBot.on_message(filters.command("start") & filters.private)
 async def start(b, m):
@@ -84,11 +86,13 @@ async def start(b, m):
         caption="Hi! I am Telegram File to Link Generator Bot with Channel support.\n\nSend me any file and get direct download & stream links!",
         parse_mode=enums.ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton("Help 📚", callback_data="help")],
-                [InlineKeyboardButton("Maintainers 😎", callback_data="maintainers")],
-                [InlineKeyboardButton("Follow ❤️", callback_data="follow")]
-            ]
+            [[
+            InlineKeyboardButton('⚙️ 𝘽𝙤𝙩 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚙️', url='https://t.me/mallumovieworldmain3'),
+            ],[
+            InlineKeyboardButton(' ⚓ 𝙊𝙏𝙏 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚓ ', url='https://t.me/+bG-xSQIgDBphODhl'),
+            ],[
+            InlineKeyboardButton('💻 𝙊𝙏𝙏 𝙐𝙥𝙙𝙖𝙩𝙚 𝘾𝙝𝙖𝙣𝙣𝙚𝙡 💻', url='https://t.me/mallumovieworldmain1')
+        ]]
         )
     )
 
@@ -111,9 +115,12 @@ async def help_handler(bot, message):
 /maintainers - Show bot maintainers""",
         parse_mode=enums.ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton("💁‍♂️ DEV", url="https://t.me/codexmania")],
-                [InlineKeyboardButton("💥 FOLLOW", url="https://GitHub.com/code-x-mania")]
-            ]
+            [[
+            InlineKeyboardButton('⚙️ 𝘽𝙤𝙩 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚙️', url='https://t.me/mallumovieworldmain3'),
+            ],[
+            InlineKeyboardButton(' ⚓ 𝙊𝙏𝙏 𝙈𝙤𝙫𝙞𝙚 𝙂𝙧𝙤𝙪𝙥 ⚓ ', url='https://t.me/+bG-xSQIgDBphODhl'),
+            ],[
+            InlineKeyboardButton('💻 𝙊𝙏𝙏 𝙐𝙥𝙙𝙖𝙩𝙚 𝘾𝙝𝙖𝙣𝙣𝙚𝙡 💻', url='https://t.me/mallumovieworldmain1')
+        ]]
         )
     )
