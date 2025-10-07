@@ -71,8 +71,6 @@ async def start_services():
     logger.info(f"Server        : {bind_address}:{Var.PORT}")
     if Var.ON_HEROKU:
         logger.info(f"App (Heroku)  : {Var.FQDN}")
-    logger.info("Repository    : https://github.com/Code-X-Mania/filestreambot")
-    logger.info("Community     : https://t.me/codexmania")
     logger.info("-----------------------------------------------------------------------")
 
     await idle()
