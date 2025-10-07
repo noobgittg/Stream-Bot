@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-async def fetch_properties(message_id):
+async def fetch_properties(message_id: int):
     try:
         media_msg = await StreamBot.get_messages(Var.BIN_CHANNEL, message_id)
         if not media_msg:
@@ -33,47 +33,57 @@ async def fetch_properties(message_id):
         return None, None
 
 
-async def render_page(message_id):
+async def render_page(message_id: int):
     try:
         file_name, mime_type = await fetch_properties(message_id)
         if not file_name or not mime_type:
-            logger.warning("Invalid file properties.")
+            logger.warning("Invalid or missing file properties.")
             return "<h3>Error: Unable to retrieve file information.</h3>"
 
-        src = urllib.parse.urljoin(Var.URL, str(message_id))
+        src = urllib.parse.urljoin(Var.URL.rstrip("/") + "/", str(message_id))
         mime_lower = mime_type.lower()
 
-        audio_formats = [
-            'audio/mpeg', 'audio/mp4', 'audio/x-mpegurl', 'audio/vnd.wav',
-            'audio/ogg', 'audio/webm', 'audio/x-wav'
-        ]
-        video_formats = [
-            'video/mp4', 'video/avi', 'video/ogg', 'video/h264',
-            'video/h265', 'video/x-matroska', 'video/webm'
-        ]
+        audio_formats = {
+            'audio/mpeg', 'audio/mp4', 'audio/x-mpegurl',
+            'audio/vnd.wav', 'audio/ogg', 'audio/webm', 'audio/x-wav'
+        }
+        video_formats = {
+            'video/mp4', 'video/avi', 'video/ogg',
+            'video/h264', 'video/h265', 'video/x-matroska', 'video/webm'
+        }
 
-        heading = file_name
         html = ""
 
+        # --- Video Page ---
         if mime_lower in video_formats:
             async with aiofiles.open('Code_X_Mania/template/req.html', mode='r') as f:
-                tag = "video"
-                html = (await f.read()).replace('tag', tag) % (f"Watch {file_name}", file_name, src)
+                template = await f.read()
+                html = template.replace('tag', 'video') % (f"Watch {file_name}", file_name, src)
             logger.info(f"Rendering video page for {file_name}")
 
+        # --- Audio Page ---
         elif mime_lower in audio_formats:
             async with aiofiles.open('Code_X_Mania/template/req.html', mode='r') as f:
-                tag = "audio"
-                html = (await f.read()).replace('tag', tag) % (f"Listen {file_name}", file_name, src)
+                template = await f.read()
+                html = template.replace('tag', 'audio') % (f"Listen {file_name}", file_name, src)
             logger.info(f"Rendering audio page for {file_name}")
 
+        # --- Download Page (Document/Other) ---
         else:
-            async with aiofiles.open('Code_X_Mania/template/dl.html', mode='r') as f:
+            file_size = "Unknown Size"
+            try:
                 async with aiohttp.ClientSession() as session:
-                    async with session.head(src) as response:
-                        size_header = response.headers.get('Content-Length')
-                        file_size = human_size(size_header) if size_header else "Unknown Size"
-                html = (await f.read()) % (f"Download {file_name}", file_name, src, file_size)
+                    async with session.head(src, timeout=10) as response:
+                        if response.status == 200:
+                            size_header = response.headers.get('Content-Length')
+                            if size_header and size_header.isdigit():
+                                file_size = human_size(int(size_header))
+            except Exception as size_error:
+                logger.warning(f"Could not fetch file size for {file_name}: {size_error}")
+
+            async with aiofiles.open('Code_X_Mania/template/dl.html', mode='r') as f:
+                template = await f.read()
+                html = template % (f"Download {file_name}", file_name, src, file_size)
             logger.info(f"Rendering document/download page for {file_name}")
 
         return html
