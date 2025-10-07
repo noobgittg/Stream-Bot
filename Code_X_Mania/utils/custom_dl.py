@@ -1,7 +1,7 @@
 import math
 from typing import Union, AsyncGenerator, List
 from pyrogram.types import Message
-from pyrogram import Client, utils, raw
+from pyrogram import Client, utils, raw, enums
 from pyrogram.session import Session, Auth
 from pyrogram.errors import AuthBytesInvalid
 from pyrogram.file_id import FileId, FileType, ThumbnailSource
@@ -13,42 +13,42 @@ async def chunk_size(length: int) -> int:
 
 
 async def offset_fix(offset: int, chunksize: int) -> int:
-    offset -= offset % chunksize
-    return offset
+    return offset - (offset % chunksize)
 
 
 class TGCustomYield:
     def __init__(self):
-        """
-        Custom class to stream files from Telegram.
-        """
         self.main_bot = StreamBot
 
     @staticmethod
     async def generate_file_properties(msg: Message) -> FileId:
-        error_message = "This message doesn't contain any downloadable media"
-        available_media = (
-            "audio", "document", "photo", "sticker",
-            "animation", "video", "voice", "video_note"
+        supported_types = (
+            enums.MessageMediaType.VIDEO,
+            enums.MessageMediaType.AUDIO,
+            enums.MessageMediaType.DOCUMENT,
+            enums.MessageMediaType.PHOTO,
+            enums.MessageMediaType.VOICE,
+            enums.MessageMediaType.VIDEO_NOTE,
+            enums.MessageMediaType.STICKER,
+            enums.MessageMediaType.ANIMATION
         )
 
-        if isinstance(msg, Message):
-            for kind in available_media:
-                media = getattr(msg, kind, None)
-                if media is not None:
-                    break
-            else:
-                raise ValueError(error_message)
-        else:
-            media = msg
+        if not isinstance(msg, Message):
+            raise ValueError("Invalid message type")
 
-        file_id_str = media if isinstance(media, str) else media.file_id
-        file_id_obj = FileId.decode(file_id_str)
+        media = None
+        for mtype in supported_types:
+            media = getattr(msg, mtype.name.lower(), None)
+            if media:
+                break
 
-        # Attach additional props for compatibility
-        setattr(file_id_obj, "file_size", getattr(media, "file_size", 0))
-        setattr(file_id_obj, "mime_type", getattr(media, "mime_type", ""))
-        setattr(file_id_obj, "file_name", getattr(media, "file_name", ""))
+        if not media:
+            raise ValueError("This message doesn't contain any supported downloadable media")
+
+        file_id_obj = FileId.decode(media.file_id)
+        file_id_obj.file_size = getattr(media, "file_size", 0)
+        file_id_obj.mime_type = getattr(media, "mime_type", "")
+        file_id_obj.file_name = getattr(media, "file_name", "")
 
         return file_id_obj
 
@@ -56,59 +56,45 @@ class TGCustomYield:
         data = await self.generate_file_properties(msg)
         media_session = client.media_sessions.get(data.dc_id)
 
-        if media_session is None:
-            if data.dc_id != await client.storage.dc_id():
-                media_session = Session(
-                    client,
-                    data.dc_id,
-                    await Auth(client, data.dc_id, await client.storage.test_mode()).create(),
-                    await client.storage.test_mode(),
-                    is_media=True
-                )
-                await media_session.start()
+        if media_session:
+            return media_session
 
-                for _ in range(3):
-                    exported_auth = await client.invoke(
-                        raw.functions.auth.ExportAuthorization(dc_id=data.dc_id)
+        if data.dc_id != await client.storage.dc_id():
+            auth = await Auth(client, data.dc_id, await client.storage.test_mode()).create()
+        else:
+            auth = await client.storage.auth_key()
+
+        media_session = Session(
+            client,
+            data.dc_id,
+            auth,
+            await client.storage.test_mode(),
+            is_media=True
+        )
+        await media_session.start()
+
+        if data.dc_id != await client.storage.dc_id():
+            for _ in range(3):
+                exported_auth = await client.invoke(raw.functions.auth.ExportAuthorization(dc_id=data.dc_id))
+                try:
+                    await media_session.invoke(
+                        raw.functions.auth.ImportAuthorization(id=exported_auth.id, bytes=exported_auth.bytes)
                     )
-                    try:
-                        await media_session.invoke(
-                            raw.functions.auth.ImportAuthorization(
-                                id=exported_auth.id,
-                                bytes=exported_auth.bytes
-                            )
-                        )
-                    except AuthBytesInvalid:
-                        continue
-                    else:
-                        break
-                else:
-                    await media_session.stop()
-                    raise AuthBytesInvalid
+                    break
+                except AuthBytesInvalid:
+                    continue
             else:
-                media_session = Session(
-                    client,
-                    data.dc_id,
-                    await client.storage.auth_key(),
-                    await client.storage.test_mode(),
-                    is_media=True
-                )
-                await media_session.start()
+                await media_session.stop()
+                raise AuthBytesInvalid
 
-            client.media_sessions[data.dc_id] = media_session
-
+        client.media_sessions[data.dc_id] = media_session
         return media_session
 
     @staticmethod
     async def get_location(file_id: FileId) -> raw.base.InputFileLocation:
-        file_type = file_id.file_type
-
-        if file_type == FileType.CHAT_PHOTO:
+        if file_id.file_type == FileType.CHAT_PHOTO:
             if file_id.chat_id > 0:
-                peer = raw.types.InputPeerUser(
-                    user_id=file_id.chat_id,
-                    access_hash=file_id.chat_access_hash
-                )
+                peer = raw.types.InputPeerUser(user_id=file_id.chat_id, access_hash=file_id.chat_access_hash)
             elif file_id.chat_access_hash == 0:
                 peer = raw.types.InputPeerChat(chat_id=-file_id.chat_id)
             else:
@@ -116,7 +102,6 @@ class TGCustomYield:
                     channel_id=utils.get_channel_id(file_id.chat_id),
                     access_hash=file_id.chat_access_hash
                 )
-
             return raw.types.InputPeerPhotoFileLocation(
                 peer=peer,
                 volume_id=file_id.volume_id,
@@ -124,7 +109,7 @@ class TGCustomYield:
                 big=file_id.thumbnail_source == ThumbnailSource.CHAT_PHOTO_BIG
             )
 
-        elif file_type == FileType.PHOTO:
+        if file_id.file_type == FileType.PHOTO:
             return raw.types.InputPhotoFileLocation(
                 id=file_id.media_id,
                 access_hash=file_id.access_hash,
@@ -153,32 +138,25 @@ class TGCustomYield:
         media_session = await self.generate_media_session(client, media_msg)
         location = await self.get_location(data)
 
-        r = await media_session.invoke(
-            raw.functions.upload.GetFile(location=location, offset=offset, limit=chunk_size)
-        )
+        for current_part in range(1, part_count + 1):
+            r = await media_session.invoke(
+                raw.functions.upload.GetFile(location=location, offset=offset, limit=chunk_size)
+            )
+            if not isinstance(r, raw.types.upload.File) or not r.bytes:
+                break
 
-        if isinstance(r, raw.types.upload.File):
-            current_part = 1
-            while current_part <= part_count:
-                chunk = r.bytes
-                if not chunk:
-                    break
+            chunk = r.bytes
+            if part_count == 1:
+                yield chunk[first_part_cut:last_part_cut]
+                break
+            elif current_part == 1:
+                yield chunk[first_part_cut:]
+            elif current_part < part_count:
+                yield chunk
+            else:
+                yield chunk[:last_part_cut]
 
-                offset += chunk_size
-
-                if part_count == 1:
-                    yield chunk[first_part_cut:last_part_cut]
-                    break
-                if current_part == 1:
-                    yield chunk[first_part_cut:]
-                elif current_part < part_count:
-                    yield chunk
-
-                r = await media_session.invoke(
-                    raw.functions.upload.GetFile(location=location, offset=offset, limit=chunk_size)
-                )
-
-                current_part += 1
+            offset += chunk_size
 
     async def download_as_bytesio(self, media_msg: Message) -> List[bytes]:
         client = self.main_bot
@@ -188,23 +166,16 @@ class TGCustomYield:
 
         limit = 1024 * 1024
         offset = 0
-        m_file = []
+        result = []
 
-        r = await media_session.invoke(
-            raw.functions.upload.GetFile(location=location, offset=offset, limit=limit)
-        )
+        while True:
+            r = await media_session.invoke(
+                raw.functions.upload.GetFile(location=location, offset=offset, limit=limit)
+            )
+            if not isinstance(r, raw.types.upload.File) or not r.bytes:
+                break
 
-        if isinstance(r, raw.types.upload.File):
-            while True:
-                chunk = r.bytes
-                if not chunk:
-                    break
+            result.append(r.bytes)
+            offset += limit
 
-                m_file.append(chunk)
-                offset += limit
-
-                r = await media_session.invoke(
-                    raw.functions.upload.GetFile(location=location, offset=offset, limit=limit)
-                )
-
-        return m_file
+        return result
