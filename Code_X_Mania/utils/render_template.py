@@ -15,23 +15,13 @@ logger.setLevel(logging.INFO)
 
 
 async def fetch_properties(message_id):
-    try:
-        media_msg = await StreamBot.get_messages(Var.BIN_CHANNEL, message_id)
-        if not media_msg:
-            logger.error(f"Message not found for ID {message_id}")
-            return None, None
-
-        file_props = await TGCustomYield().generate_file_properties(media_msg)
-        file_name = file_props.file_name or f"{secrets.token_hex(2)}.bin"
-        mime_type = file_props.mime_type or mimetypes.guess_type(file_name)[0] or "application/octet-stream"
-
-        logger.info(f"Fetched file: {file_name} | MIME: {mime_type}")
-        return file_name, mime_type
-
-    except Exception as e:
-        logger.exception(f"Error fetching properties for message {message_id}: {e}")
-        return None, None
-
+    media_msg = await StreamBot.get_messages(Var.BIN_CHANNEL, message_id)
+    file_properties = await TGCustomYield().generate_file_properties(media_msg)
+    file_name = file_properties.file_name if file_properties.file_name \
+        else f"{secrets.token_hex(2)}.jpeg"
+    mime_type = file_properties.mime_type if file_properties.mime_type \
+        else f"{mimetypes.guess_type(file_name)}"
+    return file_name, mime_type
 
 async def render_page(message_id):
     try:
