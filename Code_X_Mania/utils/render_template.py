@@ -47,17 +47,11 @@ async def render_page(message_id: int):
         src = urllib.parse.urljoin(Var.URL, str(message_id))
         mime_lower = mime_type.lower()
 
-        audio_formats = {
-            'audio/mpeg', 'audio/mp4', 'audio/x-mpegurl', 'audio/vnd.wav',
-            'audio/ogg', 'audio/webm', 'audio/x-wav'
-        }
-        video_formats = {
-            'video/mp4', 'video/avi', 'video/ogg', 'video/h264',
-            'video/h265', 'video/x-matroska', 'video/webm'
-        }
-
+        audio_formats = ['audio/mpeg', 'audio/mp4', 'audio/x-mpegurl', 'audio/vnd.wav', 'audio/ogg', 'audio/webm', 'audio/x-wav']
+        video_formats = ['video/mp4', 'video/avi', 'video/ogg', 'video/h264', 'video/h265', 'video/x-matroska', 'video/webm']
+        
         html = ""
-
+        
         if mime_lower in video_formats:
             async with aiofiles.open('Code_X_Mania/template/req.html', mode='r') as f:
                 template = await f.read()
