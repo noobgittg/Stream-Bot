@@ -28,7 +28,7 @@ async def private_receive_handler(c: Client, m: Message):
                 if user.status == "kicked":
                     await c.send_message(
                         chat_id=m.chat.id,
-                        text="Sorry, you are banned from using me.\n\nContact developer @adarshgoelz",
+                        text="Sorry, you are banned from using me.",
                         parse_mode=enums.ParseMode.HTML,
                         disable_web_page_preview=True
                     )
@@ -43,7 +43,7 @@ async def private_receive_handler(c: Client, m: Message):
                 await m.reply_text(str(e))
                 await c.send_message(
                     chat_id=m.chat.id,
-                    text="Something went wrong. Contact my boss @adarshgoelz",
+                    text="Something went wrong.",
                     parse_mode=enums.ParseMode.HTML,
                     disable_web_page_preview=True
                 )
