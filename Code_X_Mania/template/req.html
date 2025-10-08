@@ -6,102 +6,75 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>%s</title>
-
-    <!-- External Stylesheets -->
+    <link rel="stylesheet" type='text/css' href="https://drive----google.com/uc?export=view&id=1pVLG4gZy7jdow3sO-wFS06aP_A9QX0O6">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Delius">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.6.9/plyr.css" />
-
-    <!-- Optional Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="https://drive.google.com/uc?export=view&id=1pVLG4gZy7jdow3sO-wFS06aP_A9QX0O6">
-
+    
+        									 
+<style>
+      marquee{
+      font-size: 30px;
+      font-weight: 800;
+      color: Blue;
+      font-family: sans-serif;
+      }
+    </style>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Raleway', sans-serif;
-            background-color: #f5f5f5;
-            color: #222;
-            text-align: center;
-        }
-
-        marquee {
-            font-size: 24px;
-            font-weight: bold;
-            color: #fff;
-            background-color: #808080;
-            padding: 10px 0;
-        }
-
-        .container {
-            margin: 30px auto;
-            max-width: 90%;
-        }
-
-        video {
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-
-        footer {
-            margin-top: 20px;
-        }
-
-        footer h4 {
-            font-family: 'Delius', cursive;
-            font-weight: normal;
-        }
-
-        footer img {
-            margin-top: 10px;
-            border-radius: 10px;
-        }
+      marquee{
+      font-size: 30px;
+      font-weight: 800;
+      color: Blue;
+      font-family: sans-serif;
+      }
     </style>
 </head>
 
 <body>
+	
     <header>
-        <marquee><span id="file-name">%s</span></marquee>
+        <marquee bgcolor="#f7f305"
+<div class="toogle"></div>
+        <div id="file-name">
+            %s
+        </div>
+</marquee>
     </header>
 
     <div class="container">
-        <!-- Plyr video player -->
-        <video src="%s" class="player" controls playsinline></video>
+        <tag src="%s" class="player"></tag>
     </div>
 
     <footer>
-        <center><h4>Video not playing ? possibly because your browser or the player doesn't support codec please download and watch :D</h4></center><p>
+	    <center><h4>Video not playing ? possibly because your browser or the player doesn't support codec please download and watch :D</h4></center><p>
 	    
-        <center><a href="https://t.me/mallumovieworldmain1">
-            <img src="https://i.ibb.co/BVBW4x8n/IMG-20251007-194043-238.jpg" 
-                 height="auto" 
-                 width="20%" 
-                 alt="MMW BOTZ - LOGO">
-        </a></center>
     </footer>
-
     <script src="https://cdn.plyr.io/3.6.9/plyr.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const controls = [
-                'play-large',
-                'rewind',
-                'play',
-                'fast-forward',
-                'progress',
-                'current-time',
-                'duration',
-                'mute',
-                'volume',
-                'captions',
-                'settings',
-                'pip',
-                'airplay',
-                'download',
-                'fullscreen'
+	<script>
+        const controls = [
+              'play-large',
+              'rewind',
+              'play', 
+              'fast-forward', 
+              'progress', 
+              'current-time',
+              'duration',
+              'mute',
+              'volume',
+              'captions',
+              'settings',
+              'pip',
+              'airplay',
+              'download',
+              'fullscreen'
             ];
-            Plyr.setup('.player', { controls });
+        document.addEventListener('DOMContentLoaded', () => {
+            const player = Plyr.setup('.player', { controls });
         });
+
+        const body = document.querySelector('body');
+        const footer = document.querySelector('footer');
+        const toogle = document.querySelector('.toogle');
     </script>
 </body>
 </html>
