@@ -22,8 +22,14 @@ async def fetch_properties(message_id):
 async def render_page(message_id):
     file_name, mime_type = await fetch_properties(message_id)
     src = urllib.parse.urljoin(Var.URL, str(message_id))
-    audio_formats = ['audio/mpeg', 'audio/mp4', 'audio/x-mpegurl', 'audio/vnd.wav']
-    video_formats = ['video/mp4', 'video/avi', 'video/ogg', 'video/h264', 'video/h265', 'video/x-matroska']
+    audio_formats = [
+            'audio/mpeg', 'audio/mp4', 'audio/x-mpegurl', 'audio/vnd.wav',
+            'audio/ogg', 'audio/webm', 'audio/x-wav'
+        ]
+        video_formats = [
+            'video/mp4', 'video/avi', 'video/ogg', 'video/h264',
+            'video/h265', 'video/x-matroska', 'video/webm'
+        ]
     if mime_type.lower() in video_formats:
         async with aiofiles.open('Code_X_Mania/template/req.html') as r:
             heading = 'Watch {}'.format(file_name)
