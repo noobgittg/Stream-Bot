@@ -4,24 +4,13 @@ import urllib.parse
 import secrets
 import mimetypes
 import logging
-
 from Code_X_Mania.vars import Var
 from Code_X_Mania.bot import StreamBot
 from Code_X_Mania.utils.custom_dl import TGCustomYield
 from Code_X_Mania.utils.file_size import human_size
 
-AUDIO_FORMATS = {
-    'audio/mpeg', 'audio/mp3', 'audio/mp4', 'audio/aac', 'audio/ogg', 'audio/opus',
-    'audio/wav', 'audio/x-wav', 'audio/webm', 'audio/flac', 'audio/x-flac',
-    'audio/x-m4a', 'audio/x-ms-wma', 'audio/amr', 'audio/midi', 'audio/x-midi',
-}
-
-VIDEO_FORMATS = {
-    'video/mp4', 'video/x-msvideo', 'video/x-flv', 'video/x-matroska',
-    'video/webm', 'video/ogg', 'video/quicktime', 'video/mpeg', 'video/3gpp',
-    'video/3gpp2', 'video/h264', 'video/h265', 'video/x-ms-wmv', 'video/x-ms-asf',
-}
-
+AUDIO_FORMATS = ['audio/mpeg', 'audio/mp4', 'audio/x-mpegurl', 'audio/vnd.wav']
+VIDEO_FORMATS = ['video/mp4', 'video/avi', 'video/ogg', 'video/h264', 'video/h265', 'video/x-matroska']
 
 async def fetch_properties(message_id: int):
     try:
