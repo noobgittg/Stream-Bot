@@ -1,71 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta property="og:image" content="https://i.ibb.co/M8S0Zzj/live-streaming.png" itemprop="thumbnailUrl">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>%s</title>
-    <link rel="stylesheet" type='text/css' href="https://drive----google.com/uc?export=view&id=1pVLG4gZy7jdow3sO-wFS06aP_A9QX0O6">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Delius">
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.9/plyr.css" />
-    
-    <style>
-      marquee {
-        font-size: 30px;
-        font-weight: 800;
-        color: black;
-        font-family: sans-serif;
+  <meta charset="UTF-8">
+  <meta property="og:image" content="https://i.ibb.co/M8S0Zzj/live-streaming.png" itemprop="thumbnailUrl">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>%s</title>
+
+  <!-- External Styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.9/dist/plyr.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway|Delius">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Raleway', sans-serif;
+      background-color: #f9f9f9;
+      color: #222;
+      text-align: center;
+    }
+
+    marquee {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      background: #808080;
+      padding: 10px 0;
+      font-family: 'Delius', cursive;
+    }
+
+    .container {
+      margin: 20px auto;
+      max-width: 800px;
+    }
+
+    video, audio {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    footer img {
+      width: 25%;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 600px) {
+      footer img {
+        width: 60%;
       }
-    </style>
+    }
+  </style>
 </head>
 
 <body>
-	
-    <header>
-        <marquee bgcolor="#808080"
-<div class="toogle"></div>
-        <div id="file-name">
-            %s
-        </div>
-</marquee>
-    </header>
+  <header>
+    <marquee behavior="scroll" direction="left">%s</marquee>
+  </header>
 
-    <div class="container">
-        <tag src="%s" class="player"></tag>
-    </div>
+  <div class="container">
+    <!-- Replace <tag> dynamically in your backend -->
+    <video src="%s" class="player" controls playsinline></video>
+  </div>
 
-    <footer>
-	    <center><h4>Video not playing ? possibly because your browser or the player doesn't support codec please download and watch :D</h4></center><p>
-		
-	</footer>
-    <script src="https://cdn.plyr.io/3.6.9/plyr.js"></script>
-	<script>
-        const controls = [
-              'play-large',
-              'rewind',
-              'play', 
-              'fast-forward', 
-              'progress', 
-              'current-time',
-              'duration',
-              'mute',
-              'volume',
-              'captions',
-              'settings',
-              'pip',
-              'airplay',
-              'download',
-              'fullscreen'
-            ];
-        document.addEventListener('DOMContentLoaded', () => {
-            const player = Plyr.setup('.player', { controls });
-        });
+  <footer>
+    <h4>Video not playing? Your browser/player may not support this codec.<br>Please download and watch 😄</h4>
+    <a href="https://t.me/mallumovieworldmain1" target="_blank">
+      <img src="https://i.ibb.co/BVBW4x8n/IMG-20251007-194043-238.jpg" alt="MMW BOTZ - LOGO">
+    </a>
+  </footer>
 
-        const body = document.querySelector('body');
-        const footer = document.querySelector('footer');
-        const toogle = document.querySelector('.toogle');
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.9/dist/plyr.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const player = new Plyr('.player', {
+        controls: [
+          'play-large', 'rewind', 'play', 'fast-forward', 'progress', 
+          'current-time', 'duration', 'mute', 'volume', 'captions', 
+          'settings', 'pip', 'airplay', 'download', 'fullscreen'
+        ]
+      });
+    });
+  </script>
 </body>
 </html>
