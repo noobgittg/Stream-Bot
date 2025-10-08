@@ -1,59 +1,43 @@
-import aiofiles
-import aiohttp
-import urllib.parse
-import secrets
-import mimetypes
-import logging
 from Code_X_Mania.vars import Var
 from Code_X_Mania.bot import StreamBot
 from Code_X_Mania.utils.custom_dl import TGCustomYield
 from Code_X_Mania.utils.file_size import human_size
+import urllib.parse
+import secrets
+import mimetypes
+import aiofiles
+import logging
+import aiohttp
 
-AUDIO_FORMATS = ['audio/mpeg', 'audio/mp4', 'audio/x-mpegurl', 'audio/vnd.wav']
-VIDEO_FORMATS = ['video/mp4', 'video/avi', 'video/ogg', 'video/h264', 'video/h265', 'video/x-matroska']
-
-async def fetch_properties(message_id: int):
-    try:
-        media_msg = await StreamBot.get_messages(Var.BIN_CHANNEL, message_id)
-        file_props = await TGCustomYield().generate_file_properties(media_msg)
-
-        file_name = file_props.file_name or f"{secrets.token_hex(2)}.bin"
-        mime_type = file_props.mime_type
-
-        if not mime_type:
-            mime_type, _ = mimetypes.guess_type(file_name)
-            mime_type = mime_type or "application/octet-stream"
-
-        return file_name, mime_type
-
-    except Exception as e:
-        logging.error(f"Error fetching file properties: {e}")
-        return f"{secrets.token_hex(2)}.bin", "application/octet-stream"
+async def fetch_properties(message_id):
+    media_msg = await StreamBot.get_messages(Var.BIN_CHANNEL, message_id)
+    file_properties = await TGCustomYield().generate_file_properties(media_msg)
+    file_name = file_properties.file_name if file_properties.file_name \
+        else f"{secrets.token_hex(2)}.jpeg"
+    mime_type = file_properties.mime_type if file_properties.mime_type \
+        else f"{mimetypes.guess_type(file_name)}"
+    return file_name, mime_type
 
 
-async def render_page(message_id: int):
+async def render_page(message_id):
     file_name, mime_type = await fetch_properties(message_id)
     src = urllib.parse.urljoin(Var.URL, str(message_id))
-    mime_main = mime_type.split('/')[0].lower()
-
-    try:
-        if mime_type.lower() in VIDEO_FORMATS or mime_type.lower() in AUDIO_FORMATS:
-            async with aiofiles.open('Code_X_Mania/template/req.html', mode='r') as r:
-                template = await r.read()
-                heading = f"{'Watch' if mime_main == 'video' else 'Listen'} {file_name}"
-                html = template.replace('tag', mime_main) % (heading, file_name, src)
-        else:
-            async with aiofiles.open('Code_X_Mania/template/dl.html', mode='r') as r:
-                template = await r.read()
-                async with aiohttp.ClientSession() as session:
-                    async with session.head(src) as response:
-                        size_header = response.headers.get('Content-Length')
-                        file_size = human_size(size_header) if size_header else "Unknown size"
-                heading = f"Download {file_name}"
-                html = template % (heading, file_name, src, file_size)
-
-        return html
-
-    except Exception as e:
-        logging.error(f"Error rendering page: {e}")
-        return f"<h3>Error loading {file_name}</h3><p>{e}</p>"
+    audio_formats = ['audio/mpeg', 'audio/mp4', 'audio/x-mpegurl', 'audio/vnd.wav']
+    video_formats = ['video/mp4', 'video/avi', 'video/ogg', 'video/h264', 'video/h265', 'video/x-matroska']
+    if mime_type.lower() in video_formats:
+        async with aiofiles.open('Code_X_Mania/template/req.html') as r:
+            heading = 'Watch {}'.format(file_name)
+            tag = mime_type.split('/')[0].strip()
+            html = (await r.read()).replace('tag', tag) % (heading, file_name, src)
+    elif mime_type.lower() in audio_formats:
+        async with aiofiles.open('Code_X_Mania/template/req.html') as r:
+            heading = 'Listen {}'.format(file_name)
+            tag = mime_type.split('/')[0].strip()
+            html = (await r.read()).replace('tag', tag) % (heading, file_name, src)
+    else:
+        async with aiofiles.open('Code_X_Mania/template/dl.html') as r:
+            async with aiohttp.ClientSession() as s:
+                async with s.get(src) as u:
+                    file_size = human_size(u.headers.get('Content-Type'))
+                    html = (await r.read()) % (heading, file_name, src, file_size)
+    return html
